@@ -2,8 +2,13 @@ const Author = require('../models/Author');
 
 module.exports = {
     async index(request, response) {
-        const authors = await Author.findAll();
+        const { page = 1 } = request.query;
+        const authors = await Author.findAll({
+            limit: 5,
+            offset: (page -1) * 5,
+        });
 
+        response.header('X-Total-Pages', page);
         return response.json(authors);
     },
 

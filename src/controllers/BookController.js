@@ -10,11 +10,8 @@ module.exports = {
             limit: 5,
             offset: (page -1) * 5,
         });
-
-        console.log(page);
-
-        
-        response.header('X-Total-Count', page)
+  
+        response.header('X-Total-Pages', page);
         return response.json(books);
     },
 
@@ -22,7 +19,7 @@ module.exports = {
         const { book_id } = request.params;
         
         const book = await Book.findByPk(book_id, {
-            include: { association: 'authors' }
+            include: { association: 'authors' },
         })
 
         if (!book) {

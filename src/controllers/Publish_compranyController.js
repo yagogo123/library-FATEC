@@ -2,8 +2,13 @@ const Publish_company = require('../models/Publish_company');
 
 module.exports = {
     async index(request, response) {
-        const publish_companies = await Publish_company.findAll();
+        const { page = 1 } = request.query;
+        const publish_companies = await Publish_company.findAll({
+            limit: 5,
+            offset: (page -1) * 5,
+        });
 
+        response.header('X-Total-Pages', page);
         return response.json(publish_companies);
     },
 

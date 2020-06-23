@@ -2,8 +2,13 @@ const Category = require('../models/Category');
 
 module.exports = {
     async index(request, response) {
-        const categories = await Category.findAll();
+        const { page = 1 } = request.query;
+        const categories = await Category.findAll({
+            limit: 5,
+            offset: (page -1) * 5,
+        });
 
+        response.header('X-Total-Pages', page);
         return response.json(categories);
     },
 
