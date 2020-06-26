@@ -1,14 +1,20 @@
 const Category = require('../models/Category');
+const Book = require('../models/Book');
 
 module.exports = {
     async index(request, response) {
-        const { page = 1 } = request.query;
         const categories = await Category.findAll({
-            limit: 5,
-            offset: (page -1) * 5,
+            attributes: ['id', 'category_name'],
+            include: 
+                {
+                    model: Book,
+                    as: 'books',
+                    through: {
+                    attributes: []
+                    }
+                },
         });
 
-        response.header('X-Total-Pages', page);
         return response.json(categories);
     },
 

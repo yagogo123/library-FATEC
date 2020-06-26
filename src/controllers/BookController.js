@@ -5,13 +5,32 @@ const Publish_company = require('../models/Publish_company');
 
 module.exports = {
     async index(request, response) {
-        const { page = 1 } = request.query;
         const books = await Book.findAll({
-            limit: 5,
-            offset: (page -1) * 5,
+            attributes: ['id', 'name', 'description', 'year'],
+            include: [
+                {
+                    model: Author,
+                    as: 'authors',
+                    through: {
+                    attributes: []
+                    }
+                },
+                {
+                    model: Category,
+                    as: 'categories',
+                    through: {
+                    attributes: []
+                    }
+                },
+                {
+                    model: Publish_company,
+                    as: 'publish_companies',
+                    through: {
+                    attributes: []
+                    }
+                },
+            ]
         });
-  
-        response.header('X-Total-Pages', page);
         return response.json(books);
     },
 

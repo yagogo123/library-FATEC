@@ -1,14 +1,20 @@
 const Author = require('../models/Author');
+const Book = require('../models/Book');
 
 module.exports = {
     async index(request, response) {
-        const { page = 1 } = request.query;
         const authors = await Author.findAll({
-            limit: 5,
-            offset: (page -1) * 5,
+            attributes: ['id', 'author_name'],
+            include: 
+                {
+                    model: Book,
+                    as: 'books',
+                    through: {
+                    attributes: []
+                    }
+                },
         });
 
-        response.header('X-Total-Pages', page);
         return response.json(authors);
     },
 
