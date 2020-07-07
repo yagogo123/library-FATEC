@@ -49,26 +49,33 @@ module.exports = {
     },
 
     async store(request, response) {
-        const { name, description, author_name, category_name, publish_company_name, year } = request.body;
+        const { name, description, author_id, category_id, publish_company_id, year } = request.body;
 
         const book = await Book.create({ name, description, year })
 
-        const [ author ] = await Author.findOrCreate({
-            where: { author_name }
-        });
+        let author_id_size = author_id.length;
+        for (let i = 0; i < author_id_size; i++){
+            const author = await Author.findOne({
+                where: { id: author_id[i].id }
+            });
+            await book.addAuthor(author);
+        }
 
-        const [ category ] = await Category.findOrCreate({
-            where: { category_name }
-        });
+        let category_id_size = category_id.length;
+        for (let i = 0; i < category_id_size; i++){
+            const category = await Category.findOne({
+                where: { id: category_id[i].id }
+            });
+            await book.addCategory(category);
+        }
 
-        const [ publish_company ] = await Publish_company.findOrCreate({
-            where: { publish_company_name }
-        });
-        
-
-        await book.addAuthor(author);
-        await book.addCategory(category);
-        await book.addPublish_company(publish_company);
+        let publish_company_id_size = publish_company_id.length;
+        for (let i = 0; i < publish_company_id_size; i++){
+            const publish_company = await Publish_company.findOne({
+                where: { id: publish_company_id[i].id }
+            });
+            await book.addPublish_company(publish_company);
+        }
 
         return response.status(200).json();
     },
